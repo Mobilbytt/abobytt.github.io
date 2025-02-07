@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Mobilabonnement – Sammenligning med familie- og aldersrabatt. Komplett data, penere design.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobilabonnement – Sammenlign og få forslag</title>
+  <style>
+    /* Grunnleggende reset og layout */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(120deg, #f0f4f9, #e1e9f3);
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+    }
+
+    header {
+      background: #4c6ef5;
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 6px;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    footer {
+      background: #ced4da;
+      text-align: center;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      color: #495057;
+    }
+
+    /* Input-seksjon */
+    .input-section {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .input-section h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #343a40;
+    }
+
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .input-row > div {
+      flex: 1 1 150px;
+      min-width: 120px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    select:focus,
+    input:focus {
+      border-color: #4c6ef5;
+    }
+    .checkboxes {
+      display: flex;
+      gap: 0.7rem;
+      margin-top: 0.3rem;
+    }
+    .checkboxes label {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #495057;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 4px;
+      transition: opacity 0.2s;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    button:hover {
+      opacity: 0.85;
+    }
+    .btn-add {
+      background: #4c6ef5;
+      color: #fff;
+    }
+
+    /* Sammenligningsliste */
+    .compare-section {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .compare-section h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #343a40;
+    }
+
+    table.compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .compare-table th, .compare-table td {
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .compare-table thead {
+      background: #f8f9fa;
+    }
+    .compare-table tbody tr:nth-child(even) {
+      background: #f1f3f5;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .btn-delete {
+      background: #e03131;
+      color: #fff;
+    }
+    .btn-duplicate {
+      background: #868e96;
+      color: #fff;
+    }
+
+    .btn-show-total {
+      background: #37b24d;
+      color: #fff;
+      margin-top: 1rem;
+    }
+
+    .current-result {
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #2b8a3e;
+    }
+    .detail-explanation {
+      margin-top: 1rem;
+      background: #f4fce3;
+      border: 1px solid #c7e2b5;
+      padding: 0.8rem;
+      border-radius: 6px;
+      white-space: pre-line;
+      font-size: 0.85rem;
+      color: #495057;
+    }
+
+    /* Alternative scenarier */
+    .alternatives-container {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .alternatives-container h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #343a40;
+    }
+
+    .operator-suggestion {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f8f9fa;
+    }
+    .operator-suggestion h3 {
+      margin-bottom: 0.3rem;
+      font-size: 1rem;
+      color: #343a40;
+    }
+    .operator-lines-text {
+      margin-left: 1rem;
+      margin-top: 0.5rem;
+      padding-left: 0.5rem;
+      border-left: 3px solid #dee2e6;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+    .operator-lines-text .line-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .price-saving {
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    .saving-positive {
+      color: #2f9e44;
+    }
+    .saving-negative {
+      color: #c92a2a;
+    }
+    .saving-neutral {
+      color: #495057;
+    }
+
+    .more-info-button {
+      background: #228be6;
+      color: #fff;
+      margin-top: 0.5rem;
+    }
+    .visit-operator-button {
+      background: #15aabf;
+      color: #fff;
+      margin-left: 0.5rem;
+    }
+    .more-info-content {
+      display: none;
+      background: #fff;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Mobilabonnement – Sammenligning og forslag</h1>
+</header>
+
+<main>
+  <!-- Input-seksjon -->
+  <div class="input-section">
+    <h2>Legg til en bruker/linje</h2>
+    <div class="input-row">
+      <div>
+        <label for="operatorSelect">Operatør</label>
+        <select id="operatorSelect">
+          <option value="">Velg operatør</option>
+        </select>
+      </div>
+      <div>
+        <label for="subscriptionSelect">Abonnement</label>
+        <select id="subscriptionSelect">
+          <option value="">Velg abonnement</option>
+        </select>
+      </div>
+      <div>
+        <label for="priceInput">Pris (kr/mnd)</label>
+        <input type="number" id="priceInput" step="1" value="0">
+      </div>
+      <div>
+        <label>Aldersrabatt</label>
+        <div class="checkboxes">
+          <label><input type="checkbox" id="under13Checkbox"> Under 13</label>
+          <label><input type="checkbox" id="under30Checkbox"> Under 30</label>
+        </div>
+      </div>
+    </div>
+    <button class="btn-add" onclick="onAddUser()">Legg til i listen</button>
+  </div>
+
+  <!-- Sammenligningsliste -->
+  <div class="compare-section">
+    <h2>Sammenligningsliste</h2>
+    <table class="compare-table" id="compareTable">
+      <thead>
+        <tr>
+          <th>Operatør</th>
+          <th>Abonnement</th>
+          <th>Pris (kr/mnd)</th>
+          <th>Under 13</th>
+          <th>Under 30</th>
+          <th>Handling</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="btn-show-total" onclick="onShowTotals()">Vis totalpris + forslag</button>
+    <div class="current-result" id="currentResult"></div>
+    <div class="detail-explanation" id="currentExplanation"></div>
+  </div>
+
+  <!-- Alternative scenarier -->
+  <div class="alternatives-container" id="alternativesContainer" style="display:none;">
+    <h2>Billigere / alternative operatørvalg</h2>
+    <div id="alternativesList"></div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 Mobilabonnement Sammenligning – Komplett data</p>
+</footer>
+
+<script>
+  /* 
+    Skriv inn operator-nettsteder her (bare eksempel-lenker). 
+    Reell drift: Oppdater dette med reelle URL-er. 
+  */
+  const operatorLinks = {
+    "ICE": "https://ice.no",
+    "Pluss mobil (Telenor nettverk)": "https://plussmobil.no",
+    "Telenor": "https://telenor.no",
+    "Happy Bytes": "https://happybytes.no",
+    "Telia": "https://telia.no",
+    "Fjordkraft": "https://fjordkraft.no"
+  };
+
+  /*
+    STOR DATAVARIABEL. (Som før, men med prisen i navnet for rask oversikt.)
+    familyDiscountPolicy: "none", "teliaSamlerabatt", "perExtraLine"
+    skip "Ung" om !under30, "Junior" om !under13, 
+    Infinity => plukk billigste Infinity ved "closestPlan".
+  */
+  const allOperators = [
+    {
+      name: "ICE",
+      familyDiscountPolicy: "none",
+      subscriptions: [
+        { planName: "Ice Max (399 kr/mnd)", data: "Ubegrenset", price: 399 },
+        { planName: "Ice 35GB (379 kr/mnd)", data: "35 GB", price: 379 },
+        { planName: "Ice 20GB (299 kr/mnd)", data: "20 GB", price: 299 },
+        { planName: "Ice 12GB (279 kr/mnd)", data: "12 GB", price: 279 },
+        { planName: "Ice 6GB (229 kr/mnd)", data: "6 GB", price: 229 },
+        { planName: "Ice 2GB (179 kr/mnd)", data: "2 GB", price: 179 },
+        { planName: "Ice Prøv oss (99 kr/mnd)", data: "30 GB i 2 mndr", price: 99 },
+
+        { planName: "Ice Max Ung (399 kr/mnd)", data: "Ubegrenset", price: 399 },
+        { planName: "Ice Ung 35GB (329 kr/mnd)", data: "35 GB", price: 329 },
+        { planName: "Ice Ung 20GB (249 kr/mnd)", data: "20 GB", price: 249 },
+        { planName: "Ice Ung 12GB (229 kr/mnd)", data: "12 GB", price: 229 },
+        { planName: "Ice Ung 6GB (179 kr/mnd)", data: "6 GB", price: 179 },
+        { planName: "Ice Prøv oss (Ung) (99 kr/mnd)", data: "30 GB i 2 mndr", price: 99 },
+
+        { planName: "Ice Junior 3GB (99 kr/mnd)", data: "3 GB", price: 99 },
+        { planName: "Ice Junior 1GB (0 kr/mnd)", data: "1 GB", price: 0 }
+      ]
+    },
+    {
+      name: "Pluss mobil (Telenor nettverk)",
+      familyDiscountPolicy: "none",
+      subscriptions: [
+        { planName: "Plussmobil Prøv oss (99 kr/mnd)", data: "50 GB (2 mndr)", price: 99 },
+        { planName: "Fri Data Standard (398 kr/mnd)", data: "Ubegrenset (150 Mbps)", price: 398 },
+        { planName: "Fri Data Maks (499 kr/mnd)", data: "Ubegrenset (1000 Mbps)", price: 499 },
+        { planName: "30 GB Standard (298 kr/mnd)", data: "30 GB", price: 298 },
+        { planName: "15 GB Standard (248 kr/mnd)", data: "15 GB", price: 248 },
+        { planName: "8 GB Standard (198 kr/mnd)", data: "8 GB", price: 198 },
+        { planName: "1 GB Standard (99 kr/mnd)", data: "1 GB", price: 99 },
+        { planName: "30 GB m/datarollover (349 kr/mnd)", data: "30 GB", price: 349 },
+        { planName: "15 GB m/datarollover (299 kr/mnd)", data: "15 GB", price: 299 },
+        { planName: "8 GB m/datarollover (239 kr/mnd)", data: "8 GB", price: 239 },
+        { planName: "1 GB m/datarollover (139 kr/mnd)", data: "1 GB", price: 139 },
+
+        { planName: "Familepakka 2 GB (2 pers) (198 kr/mnd)", data: "2 GB", price: 198 },
+        { planName: "Familepakka 5 GB (2 pers) (298 kr/mnd)", data: "5 GB", price: 298 },
+        { planName: "Familepakka 10 GB (2 pers) (398 kr/mnd)", data: "10 GB", price: 398 },
+        { planName: "Familepakka 20 GB (2 pers) (498 kr/mnd)", data: "20 GB", price: 498 },
+        { planName: "Familepakka 40 GB (2 pers) (598 kr/mnd)", data: "40 GB", price: 598 },
+        { planName: "Familepakka 80 GB (2 pers) (748 kr/mnd)", data: "80 GB", price: 748 },
+
+        { planName: "Familepakka 5 GB (3 pers) (407 kr/mnd)", data: "5 GB", price: 407 },
+        { planName: "Familepakka 80 GB (3 pers) (847 kr/mnd)", data: "80 GB", price: 847 }
+      ]
+    },
+    {
+      name: "Telenor",
+      familyDiscountPolicy: "perExtraLine",
+      subscriptions: [
+        { planName: "Ubegrenset Enkel (549 kr/mnd)", data: "Ubegrenset (250 Mbps)", price: 549 },
+        { planName: "Ubegrenset Normal (649 kr/mnd)", data: "Ubegrenset", price: 649 },
+        { planName: "Ubegrenset Optimal (749 kr/mnd)", data: "Ubegrenset", price: 749 },
+        { planName: "Ubegrenset Maksimal (799 kr/mnd)", data: "Ubegrenset", price: 799 },
+        { planName: "Telenor Fast 5GB (379 kr/mnd)", data: "5 GB", price: 379 },
+        { planName: "Telenor Fast 10GB (459 kr/mnd)", data: "10 GB", price: 459 }
+      ]
+    },
+    {
+      name: "Happy Bytes",
+      familyDiscountPolicy: "none",
+      subscriptions: [
+        { planName: "Happybytes flex (70 kr/mnd)", data: "Flex", price: 70 },
+        { planName: "Happybytes 2GB (138 kr/mnd)", data: "2 GB", price: 138 },
+        { planName: "Happybytes 5GB (148 kr/mnd)", data: "5 GB", price: 148 },
+        { planName: "Happybytes 12GB (198 kr/mnd)", data: "12 GB", price: 198 },
+        { planName: "Happybytes 15GB (248 kr/mnd)", data: "15 GB", price: 248 },
+        { planName: "Happybytes 1 om dagen (248 kr/mnd)", data: "30 GB ca.", price: 248 },
+        { planName: "Happybytes 30GB (298 kr/mnd)", data: "30 GB", price: 298 },
+        { planName: "Happybytes Fri data (348 kr/mnd)", data: "Ubegrenset", price: 348 },
+        { planName: "Happybytes Fri data+ (448 kr/mnd)", data: "Ubegrenset", price: 448 }
+      ]
+    },
+    {
+      name: "Telia",
+      familyDiscountPolicy: "teliaSamlerabatt",
+      subscriptions: [
+        { planName: "Telia X Start (1 bruker) (479 kr/mnd)", data: "Ubegrenset (10 Mbps)", price: 479 },
+        { planName: "Telia X Basis (499 kr/mnd)", data: "Ubegrenset (250 Mbps)", price: 499 },
+        { planName: "Telia X Max (599 kr/mnd)", data: "Ubegrenset (1000 Mbps)", price: 599 },
+        { planName: "Telia X + Viaplay Total (1099 kr/mnd)", data: "Ubegrenset (1000 Mbps)", price: 1099 },
+        { planName: "Telia 10GB (379 kr/mnd)", data: "10 GB", price: 379 },
+        { planName: "Telia 5GB (329 kr/mnd)", data: "5 GB", price: 329 },
+
+        { planName: "Telia X Ung (399 kr/mnd)", data: "Ubegrenset", price: 399 },
+        { planName: "Telia Ung 10GB (299 kr/mnd)", data: "10 GB", price: 299 },
+        { planName: "Telia Junior 5GB (179 kr/mnd)", data: "5 GB", price: 179 },
+        { planName: "Telia Junior 1GB (129 kr/mnd)", data: "1 GB", price: 129 }
+      ]
+    },
+    {
+      name: "Fjordkraft",
+      familyDiscountPolicy: "none",
+      subscriptions: [
+        { planName: "Fjordkraft 1GB (129 kr/mnd)", data: "1 GB", price: 129 },
+        { planName: "Fjordkraft 5GB (199 kr/mnd)", data: "5 GB", price: 199 },
+        { planName: "Fjordkraft 10GB (249 kr/mnd)", data: "10 GB", price: 249 },
+        { planName: "Fjordkraft 15GB (299 kr/mnd)", data: "15 GB", price: 299 },
+        { planName: "Fjordkraft 20GB (299 kr/mnd)", data: "20 GB", price: 299 },
+        { planName: "Fjordkraft Fri data normal (379 kr/mnd)", data: "Ubegrenset", price: 379 },
+        { planName: "Fjordkraft Fri data rask (399 kr/mnd)", data: "Ubegrenset", price: 399 },
+        { planName: "Fjordkraft Fri data ekstra rask (499 kr/mnd)", data: "Ubegrenset", price: 499 }
+      ]
+    }
+  ];
+
+  let compareList = [];
+
+  /* INIT: populator */
+  function populateOperatorSelect() {
+    const operatorSelect = document.getElementById("operatorSelect");
+    operatorSelect.innerHTML = `<option value="">Velg operatør</option>`;
+    allOperators.forEach(op => {
+      const opt = document.createElement("option");
+      opt.value = op.name;
+      opt.textContent = op.name;
+      operatorSelect.appendChild(opt);
+    });
+  }
+
+  function onOperatorChange() {
+    const operatorName = document.getElementById("operatorSelect").value;
+    const subscriptionSelect = document.getElementById("subscriptionSelect");
+    subscriptionSelect.innerHTML = `<option value="">Velg abonnement</option>`;
+    if (!operatorName) return;
+
+    const opData = allOperators.find(o => o.name === operatorName);
+    if (opData) {
+      opData.subscriptions.forEach(sub => {
+        const opt = document.createElement("option");
+        opt.value = sub.planName;
+        opt.textContent = sub.planName;
+        subscriptionSelect.appendChild(opt);
+      });
+    }
+  }
+
+  function onSubscriptionChange() {
+    const operatorName = document.getElementById("operatorSelect").value;
+    const subscriptionName = document.getElementById("subscriptionSelect").value;
+    const priceInput = document.getElementById("priceInput");
+
+    const opData = allOperators.find(o => o.name === operatorName);
+    if (!opData) {
+      priceInput.value = "0";
+      return;
+    }
+    const sub = opData.subscriptions.find(s => s.planName === subscriptionName);
+    if (sub) {
+      priceInput.value = sub.price;
+    } else {
+      priceInput.value = "0";
+    }
+  }
+
+  /* Legg til bruker-linje */
+  function onAddUser() {
+    const operatorName = document.getElementById("operatorSelect").value;
+    const subscriptionName = document.getElementById("subscriptionSelect").value;
+    const priceVal = parseFloat(document.getElementById("priceInput").value) || 0;
+    const u13 = document.getElementById("under13Checkbox").checked;
+    const u30 = document.getElementById("under30Checkbox").checked;
+
+    if (!operatorName || !subscriptionName) {
+      alert("Du må velge operatør og abonnement.");
+      return;
+    }
+
+    compareList.push({
+      operator: operatorName,
+      subscription: subscriptionName,
+      price: priceVal,
+      under13: u13,
+      under30: u30
+    });
+
+    // Resett
+    document.getElementById("operatorSelect").value = "";
+    document.getElementById("subscriptionSelect").innerHTML = `<option value="">Velg abonnement</option>`;
+    document.getElementById("priceInput").value = "0";
+    document.getElementById("under13Checkbox").checked = false;
+    document.getElementById("under30Checkbox").checked = false;
+
+    renderCompareList();
+  }
+
+  function deleteRow(index) {
+    compareList.splice(index, 1);
+    renderCompareList();
+  }
+  function duplicateRow(index) {
+    const orig = compareList[index];
+    compareList.push({
+      operator: orig.operator,
+      subscription: orig.subscription,
+      price: orig.price,
+      under13: orig.under13,
+      under30: orig.under30
+    });
+    renderCompareList();
+  }
+
+  function renderCompareList() {
+    const tbody = document.getElementById("compareTable").querySelector("tbody");
+    tbody.innerHTML = "";
+
+    compareList.forEach((line, idx) => {
+      const tr = document.createElement("tr");
+
+      const tdOp = document.createElement("td");
+      tdOp.textContent = line.operator;
+      tr.appendChild(tdOp);
+
+      const tdSub = document.createElement("td");
+      tdSub.textContent = line.subscription;
+      tr.appendChild(tdSub);
+
+      const tdPrice = document.createElement("td");
+      tdPrice.textContent = line.price + " kr";
+      tr.appendChild(tdPrice);
+
+      const tdU13 = document.createElement("td");
+      tdU13.textContent = line.under13 ? "Ja" : "Nei";
+      tr.appendChild(tdU13);
+
+      const tdU30 = document.createElement("td");
+      tdU30.textContent = line.under30 ? "Ja" : "Nei";
+      tr.appendChild(tdU30);
+
+      const tdActions = document.createElement("td");
+      tdActions.className = "action-btns";
+
+      const btnDel = document.createElement("button");
+      btnDel.className = "btn-delete";
+      btnDel.textContent = "Slett";
+      btnDel.onclick = () => deleteRow(idx);
+
+      const btnDup = document.createElement("button");
+      btnDup.className = "btn-duplicate";
+      btnDup.textContent = "Dupliser";
+      btnDup.onclick = () => duplicateRow(idx);
+
+      tdActions.appendChild(btnDel);
+      tdActions.appendChild(btnDup);
+      tr.appendChild(tdActions);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* On Show Totals */
+  function onShowTotals() {
+    if (!compareList.length) {
+      alert("Ingen linjer lagt til.");
+      return;
+    }
+
+    // 1) Nåsituasjon
+    const current = calcScenario(compareList, true);
+    document.getElementById("currentResult").textContent = `Din nåværende totalpris: ${current.total} kr/mnd`;
+    document.getElementById("currentExplanation").textContent = current.explanation;
+
+    // Samle unike operatorer i bruk
+    const usedOperators = [...new Set(compareList.map(l => l.operator))];
+
+    // 2) Alternative scenarioer
+    const altContainer = document.getElementById("alternativesContainer");
+    const altList = document.getElementById("alternativesList");
+    altList.innerHTML = "";
+    altContainer.style.display = "block";
+
+    let scenarioArray = [];
+    allOperators.forEach(op => {
+      // Ikke foreslå samme operatør
+      if (usedOperators.includes(op.name)) return;
+
+      const scenarioCalc = createFullOperatorScenario(compareList, op.name);
+      if (scenarioCalc) {
+        scenarioArray.push(scenarioCalc);
+      }
+    });
+
+    // Besparelse
+    scenarioArray.forEach(s => {
+      s.saving = current.total - s.total; 
+    });
+    // Sortér scenarioArray på saving desc
+    scenarioArray.sort((a,b) => b.saving - a.saving);
+
+    // Bygg output
+    scenarioArray.forEach(s => {
+      const wrap = document.createElement("div");
+      wrap.className = "operator-suggestion";
+
+      // Besparelse per mnd + per år
+      let savingClass = "saving-neutral";
+      let savingText = "";
+      let savingYear = s.saving * 12;
+
+      if (s.saving > 0) {
+        savingClass = "saving-positive";
+        savingText = `Du sparer ${s.saving} kr/mnd (ca. ${savingYear} kr/år)`;
+      } else if (s.saving < 0) {
+        savingClass = "saving-negative";
+        savingText = `Dette blir ${Math.abs(s.saving)} kr/mnd dyrere (ca. ${Math.abs(savingYear)} kr/år)`;
+      } else {
+        savingText = "Ingen prisforskjell i måneden (0 kr/år)";
+      }
+
+      // Over-skrift + besparelse
+      wrap.innerHTML = `
+        <h3>${s.operatorName} – Totalpris: ${s.total} kr/mnd</h3>
+        <div class="price-saving ${savingClass}">${savingText}</div>
+      `;
+
+      // Tekstlig oversikt for hver linje. 
+      let linesHtml = `<div class="operator-lines-text">`;
+      s.lines.forEach((ln, idx) => {
+        // console.log() i stedet for å vise planChoiceReason i UI
+        console.log(`For linje #${idx+1} -> reason: ${ln.planChoiceReason}`);
+        
+        // Sammenlign: "idag" vs "forslag"
+        // Hent original-linje
+        const originalLine = compareList[idx];
+        let differenceString = "";
+        if (originalLine) {
+          differenceString = createDiffString(originalLine.subscription, ln.subscription, originalLine.price, ln.price);
+        }
+
+        linesHtml += `
+          <div class="line-title">Linje #${idx+1}:</div>
+          <p style="margin-bottom:0.5rem;">
+            Abonnement nå: <strong>${originalLine.subscription}</strong> → Forslag: <strong>${ln.subscription}</strong><br>
+            Pris nå: <strong>${originalLine.price} kr</strong> → Forslag: <strong>${ln.price} kr</strong><br>
+            <em>${differenceString}</em>
+          </p>
+        `;
+      });
+      linesHtml += `</div>`;
+
+      // "Les mer" + "Besøk operator"
+      const operatorLink = operatorLinks[s.operatorName] || "#";
+      let idMoreInfo = `more-info-${s.operatorName.replace(/\s+/g, '_')}`;
+      wrap.innerHTML += linesHtml + `
+        <button class="more-info-button" onclick="toggleMoreInfo('${idMoreInfo}')">Les mer</button>
+        <a class="visit-operator-button" href="${operatorLink}" target="_blank">Besøk ${s.operatorName}</a>
+        <div id="${idMoreInfo}" class="more-info-content">
+          <p><strong>Forskjeller kontra nåværende operatør:</strong></p>
+          <p>F.eks. datahastigheter, bindingstid, tilleggstjenester mm.</p>
+          <p>(Her kan du legge mer info om ${s.operatorName} vs. ${usedOperators.join(", ")} ...)</p>
+        </div>
+      `;
+
+      altList.appendChild(wrap);
+    });
+  }
+
+  /* Eksempel differanse-beskrivelse */
+  function createDiffString(oldSub, newSub, oldPrice, newPrice) {
+    let diff = newPrice - oldPrice;
+    if (diff===0) return "Samme pris på denne linjen";
+    if (diff>0) return `Dette forslaget er ${Math.abs(diff)} kr dyrere for denne linjen.`;
+    return `Dette forslaget er ${Math.abs(diff)} kr billigere for denne linjen.`;
+  }
+
+  /* Toggle "Les mer" content */
+  function toggleMoreInfo(contentId) {
+    const elem = document.getElementById(contentId);
+    if (elem.style.display==="none" || !elem.style.display) {
+      elem.style.display="block";
+    } else {
+      elem.style.display="none";
+    }
+  }
+
+  /*
+   * Nåsituasjon-beregning
+   */
+  function calcScenario(list, showDetails=false) {
+    let explanation = "";
+    let grouped = {};
+    list.forEach(item => {
+      if (!grouped[item.operator]) grouped[item.operator] = [];
+      grouped[item.operator].push({
+        operator: item.operator,
+        subscription: item.subscription,
+        basePrice: item.price,
+        price: item.price,
+        under13: item.under13,
+        under30: item.under30,
+        familyDiscount: 0,
+        skipAgeDiscount: false,
+        ageDiscount: 0,
+        planChoiceReason: "Samme abonnement du har valgt"
+      });
+    });
+
+    let total = 0;
+    for (let opName in grouped) {
+      let lines = grouped[opName];
+      let opData = allOperators.find(o => o.name === opName);
+      if (!opData) continue;
+      if (showDetails) explanation += `Operatør: ${opName}\n`;
+
+      applyFamilyDiscountScenario(opData.familyDiscountPolicy, lines);
+      lines.forEach(l => applyAgeDiscountScenario(l));
+
+      let sumOp = lines.reduce((acc, l) => acc + l.price, 0);
+      total += sumOp;
+
+      if (showDetails) {
+        lines.forEach(l => {
+          explanation += `   - ${l.subscription} (base: ${l.basePrice} kr) => endelig: ${l.price} kr\n`;
+        });
+        explanation += `   Sum for ${opName}: ${sumOp} kr\n\n`;
+      }
+    }
+    return { total, explanation };
+  }
+
+  /*
+   * createFullOperatorScenario(list, operatorName)
+   */
+  function createFullOperatorScenario(list, operatorName) {
+    let opData = allOperators.find(o => o.name===operatorName);
+    if (!opData) return null;
+
+    // Opprett lines
+    let lines = list.map((item, idx) => {
+      // Finn original data
+      let originalOp = allOperators.find(o => o.name===item.operator);
+      if (!originalOp) return null;
+      let originalSub = originalOp.subscriptions.find(s => s.planName===item.subscription);
+      if (!originalSub) return null;
+
+      let originalGB = parseDataAmount(originalSub.data);
+
+      let planResult = findClosestPlanForAge(opData, originalGB, item.under13, item.under30);
+      if (!planResult) return null;
+
+      // Log reason to console
+      console.log(`Scenario: line #${idx+1}, operator ${operatorName}, reason= ${planResult.reason}`);
+      
+      return {
+        operator: operatorName,
+        subscription: planResult.planName,
+        basePrice: planResult.price,
+        price: planResult.price,
+        under13: item.under13,
+        under30: item.under30,
+        familyDiscount: 0,
+        skipAgeDiscount: false,
+        ageDiscount: 0,
+        planChoiceReason: planResult.reason
+      };
+    });
+    if (lines.includes(null)) return null;
+
+    applyFamilyDiscountScenario(opData.familyDiscountPolicy, lines);
+    lines.forEach(l => applyAgeDiscountScenario(l));
+    let total = lines.reduce((acc,l)=>acc+l.price, 0);
+
+    return { operatorName, lines, total };
+  }
+
+  /* parse data */
+  function parseDataAmount(dataStr) {
+    if (!dataStr) return 0;
+    let lower = dataStr.toLowerCase();
+    if (lower.includes("ubeg") || lower.includes("fri data")) return Infinity;
+    let match = dataStr.match(/(\d+)\s*gb/);
+    if (match) return parseInt(match[1],10);
+    return 0;
+  }
+
+  /* Finn plan for alder */
+  function findClosestPlanForAge(opData, wantedGB, under13, under30) {
+    // Filtrer vekk 'ung' hvis !under30, 'junior' hvis !under13
+    let valid = opData.subscriptions.filter(sub => {
+      let low = sub.planName.toLowerCase();
+      if (low.includes("ung") && !under30) return false;
+      if (low.includes("junior") && !under13) return false;
+      return true;
+    });
+    if (!valid.length) return null;
+
+    let infPlans = valid.filter(v => parseDataAmount(v.data)===Infinity);
+    let normalPlans = valid.filter(v => parseDataAmount(v.data)!==Infinity);
+
+    // De to hovedcase:
+    if (wantedGB===Infinity) {
+      // Har ubegrenset i dag => plukk billigste Infinity i new op
+      if (infPlans.length>0) {
+        infPlans.sort((a,b)=>a.price-b.price);
+        let chosen=infPlans[0];
+        return {
+          planName: chosen.planName,
+          price: chosen.price,
+          data: chosen.data,
+          reason: `Billigste ubegrenset-plan i ${opData.name}, fordi original var Infinity`
+        };
+      } else {
+        // ingen Infinity => plukk "største data"
+        normalPlans.sort((a,b) => parseDataAmount(b.data)-parseDataAmount(a.data));
+        let chosen=normalPlans[0];
+        return {
+          planName: chosen.planName,
+          price: chosen.price,
+          data: chosen.data,
+          reason: `Ingen Infinity i ${opData.name}, valgte største data: ${chosen.data}`
+        };
+      }
+    } else {
+      // wantedGB = noe tall
+      // vi beregner diff i data (Infinity => diff = 9999?), deretter tiebreak på pris
+      let candidateList = [];
+      valid.forEach(p => {
+        let gb = parseDataAmount(p.data);
+        let diff = (gb===Infinity) ? Math.abs(9999 - wantedGB) : Math.abs(gb - wantedGB);
+        candidateList.push({plan:p, diff});
+      });
+      candidateList.sort((a,b) => {
+        if (a.diff!==b.diff) return a.diff-b.diff;
+        return a.plan.price-b.plan.price;
+      });
+      let chosen = candidateList[0].plan;
+      let finalDiff = candidateList[0].diff;
+      if (parseDataAmount(chosen.data)===Infinity) {
+        return {
+          planName: chosen.planName,
+          price: chosen.price,
+          data: chosen.data,
+          reason: `Valgt Infinity i ${opData.name} (til tross for wantedGB=${wantedGB}), diff i datamengde: ${finalDiff}.`
+        };
+      } else {
+        let phrase = finalDiff===0 ? "Perfekt match" : `Diff = ${finalDiff} GB`;
+        return {
+          planName: chosen.planName,
+          price: chosen.price,
+          data: chosen.data,
+          reason: `Minst data-avvik i ${opData.name}. ${phrase}, la vekt på lav pris ved lik diff.`
+        };
+      }
+    }
+  }
+
+  /* Family discount */
+  function applyFamilyDiscountScenario(policy, lines) {
+    if (policy==="teliaSamlerabatt") {
+      if (lines.length<2) return;
+      lines.sort((a,b)=>b.price-a.price);
+      lines[0].familyDiscount=0;
+      for (let i=1;i<lines.length;i++){
+        let subL=lines[i].subscription.toLowerCase();
+        if (subL.includes("ung")) {
+          lines[i].familyDiscount=0;
+        } else if (subL.includes("ubeg")||subL.includes("x")) {
+          lines[i].familyDiscount=100;
+          lines[i].price=Math.max(0, lines[i].price-100);
+        } else {
+          lines[i].familyDiscount=30;
+          lines[i].price=Math.max(0, lines[i].price-30);
+        }
+      }
+    }
+    else if (policy==="perExtraLine") {
+      if (lines.length<2)return;
+      let unl=lines.filter(l=>l.subscription.toLowerCase().includes("ubeg"));
+      if (unl.length<=1)return;
+      unl.sort((a,b)=>b.price-a.price);
+      unl[0].familyDiscount=0;
+      for (let i=1;i<unl.length;i++){
+        unl[i].familyDiscount=100;
+        unl[i].price=Math.max(0, unl[i].price-100);
+        unl[i].skipAgeDiscount=true;
+      }
+    }
+  }
+
+  function applyAgeDiscountScenario(line) {
+    if (line.skipAgeDiscount) return;
+    let disc=0;
+    if (line.under13) disc=100;
+    else if (line.under30) disc=50;
+    line.ageDiscount=disc;
+    line.price=Math.max(0, line.price-disc);
+  }
+
+  /* INIT */
+  window.onload = function(){
+    populateOperatorSelect();
+    document.getElementById("operatorSelect").addEventListener("change", onOperatorChange);
+    document.getElementById("subscriptionSelect").addEventListener("change", onSubscriptionChange);
+  };
+</script>
+</body>
+</html>
